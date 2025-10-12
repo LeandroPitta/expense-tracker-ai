@@ -218,6 +218,21 @@ type PaymentMethod =
 - **File names**: In English
 - **Inline documentation**: In English
 
+### SOLID Principles
+- **MANDATORY**: All code must follow **SOLID principles**
+- **Single Responsibility**: Each class/function has one reason to change
+- **Open/Closed**: Open for extension, closed for modification
+- **Liskov Substitution**: Subtypes must be substitutable for base types
+- **Interface Segregation**: No client should depend on unused methods
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### Architecture Patterns
+- **Backend**: Clean Architecture with layers (Controllers, Services, Repositories)
+- **Frontend**: Component-based architecture with clear separation of concerns
+- **Dependency Injection**: Use for database connections, external services
+- **Error Handling**: Centralized error handling with proper logging
+- **Validation**: Separate validation layer with reusable validators
+
 ### Frontend
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
@@ -307,10 +322,44 @@ GET    /api/categories            # List categories and subcategories
 - Security headers
 
 ## 📱 Responsiveness
-- **Mobile First**: Design optimized for mobile
-- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
-- **Navigation**: Collapsible sidebar on mobile
-- **Forms**: Adaptive layout
+
+### Device Support
+- **MANDATORY**: Application must work perfectly on **desktop and smartphone**
+- **Primary Target**: Desktop computers (1920x1080 and above)
+- **Secondary Target**: Smartphones (375x667 and above)
+- **Tablet Support**: Nice to have (768x1024)
+
+### Breakpoints Strategy
+- **Mobile First**: Design starts from mobile and scales up
+- **Breakpoints**: 
+  - `xs`: < 640px (Smartphones - Portrait)
+  - `sm`: 640px - 768px (Smartphones - Landscape, Small tablets)
+  - `md`: 768px - 1024px (Tablets, Small laptops)
+  - `lg`: 1024px - 1280px (Laptops, Small desktops)
+  - `xl`: 1280px+ (Large desktops, Monitors)
+
+### Responsive Requirements
+- **Navigation**: 
+  - Desktop: Fixed sidebar with full navigation
+  - Mobile: Collapsible hamburger menu or bottom navigation
+- **Forms**: 
+  - Desktop: Multi-column layouts where appropriate
+  - Mobile: Single column, optimized for touch input
+- **Tables/Lists**: 
+  - Desktop: Full table view with all columns
+  - Mobile: Card-based layout or horizontally scrollable tables
+- **Charts**: 
+  - Desktop: Larger charts with detailed tooltips
+  - Mobile: Simplified charts optimized for touch interaction
+- **Modals**: 
+  - Desktop: Centered modals with max-width
+  - Mobile: Full-screen or bottom sheet modals
+
+### Touch and Interaction
+- **Touch Targets**: Minimum 44px for mobile tap targets
+- **Gestures**: Swipe actions for mobile (delete, edit)
+- **Keyboard**: Full keyboard navigation support for desktop
+- **Hover States**: Only on devices that support hover (desktop)
 
 ## 🧪 Testing (Future)
 - **Backend**: Jest + Supertest

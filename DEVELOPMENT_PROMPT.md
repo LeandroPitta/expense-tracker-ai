@@ -150,6 +150,62 @@ const CATEGORIES = {
 }
 ```
 
+## 📐 SOLID Principles (MANDATORY)
+
+### Architecture Requirements
+- **MANDATORY**: All backend code must follow **SOLID principles**
+- **Single Responsibility**: Each class/service has one reason to change
+- **Open/Closed**: Open for extension, closed for modification
+- **Liskov Substitution**: Subtypes must be substitutable for base types
+- **Interface Segregation**: No client should depend on unused methods
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### Implementation Guidelines
+```typescript
+// Example structure following SOLID principles
+
+// Interfaces (Dependency Inversion)
+interface IExpenseRepository {
+  create(expense: Expense): Promise<Expense>;
+  findById(id: string): Promise<Expense | null>;
+  findAll(filters: ExpenseFilters): Promise<Expense[]>;
+  update(id: string, expense: Partial<Expense>): Promise<Expense>;
+  delete(id: string): Promise<void>;
+}
+
+interface IExpenseService {
+  createExpense(data: CreateExpenseDto): Promise<Expense>;
+  getExpenses(filters: ExpenseFilters): Promise<PaginatedResult<Expense>>;
+  updateExpense(id: string, data: UpdateExpenseDto): Promise<Expense>;
+  deleteExpense(id: string): Promise<void>;
+}
+
+// Services (Single Responsibility)
+class ExpenseService implements IExpenseService {
+  constructor(
+    private expenseRepository: IExpenseRepository,
+    private validator: IValidator,
+    private logger: ILogger
+  ) {}
+  
+  // Business logic only
+}
+
+// Repository (Single Responsibility)
+class ExpenseRepository implements IExpenseRepository {
+  constructor(private database: IDatabase) {}
+  
+  // Data access only
+}
+
+// Controllers (Single Responsibility)
+class ExpenseController {
+  constructor(private expenseService: IExpenseService) {}
+  
+  // HTTP handling only
+}
+```
+
 ## 🛠️ Required Project Structure
 
 ```
@@ -608,18 +664,85 @@ const useCategories = () => {
 - **Expense List**: Detailed table with all expenses
 - **Chart**: Embedded category pie chart
 
-## 📱 Responsive Design
+## 📱 Responsive Design (MANDATORY)
 
-### Breakpoints
-- **Mobile**: < 640px - Single column, collapsible sidebar
-- **Tablet**: 640px - 1024px - Adapted layouts, side navigation
-- **Desktop**: > 1024px - Full layout with sidebar
+### Device Requirements
+- **MANDATORY**: Application must work perfectly on **desktop computers and smartphones**
+- **Primary Target**: Desktop (1920x1080+) - Full featured experience
+- **Secondary Target**: Smartphones (375x667+) - Optimized mobile experience
+- **Tablet Support**: Nice to have (768x1024) - Adaptive experience
 
-### Mobile Optimizations
-- **Touch-friendly**: Large buttons, easy tap targets
-- **Swipe Actions**: Delete/edit gestures on expense items
-- **Bottom Navigation**: Quick access to main sections
-- **Optimized Forms**: Mobile-friendly inputs and selectors
+### Breakpoints Strategy
+```css
+/* Mobile First Approach - MANDATORY */
+/* Base styles: Mobile (< 640px) */
+.container { padding: 1rem; }
+
+/* Small screens: Large phones (≥ 640px) */
+@media (min-width: 640px) { 
+  .container { padding: 1.5rem; }
+}
+
+/* Medium screens: Tablets (≥ 768px) */
+@media (min-width: 768px) { 
+  .container { padding: 2rem; }
+}
+
+/* Large screens: Laptops (≥ 1024px) */
+@media (min-width: 1024px) { 
+  .container { padding: 2.5rem; }
+}
+
+/* Extra large: Desktops (≥ 1280px) */
+@media (min-width: 1280px) { 
+  .container { padding: 3rem; }
+}
+```
+
+### Responsive Component Requirements
+
+#### Navigation
+- **Desktop**: Fixed sidebar with full navigation menu
+- **Mobile**: Collapsible hamburger menu or bottom tab navigation
+- **Implementation**: Use Tailwind `hidden md:block` and `md:hidden` classes
+
+#### Layout
+- **Desktop**: Multi-column layouts (sidebar + main content)
+- **Mobile**: Single column, stacked layout
+- **Grid**: Use CSS Grid with responsive columns
+
+#### Forms
+- **Desktop**: Multi-column forms where appropriate
+- **Mobile**: Single column, larger touch targets (min 44px)
+- **Inputs**: Full width on mobile, constrained width on desktop
+
+#### Tables/Lists
+- **Desktop**: Full table view with all columns visible
+- **Mobile**: Card-based layout or horizontal scroll with important columns
+- **Implementation**: Use `overflow-x-auto` for mobile tables
+
+#### Charts and Graphs
+- **Desktop**: Larger charts with detailed legends and tooltips
+- **Mobile**: Simplified charts optimized for touch, responsive sizing
+- **Chart.js**: Configure responsive options
+
+#### Modals/Dialogs
+- **Desktop**: Centered modals with max-width constraints
+- **Mobile**: Full-screen modals or bottom sheet style
+- **Implementation**: Use `fixed inset-0` for mobile, `fixed inset-x-4 top-4` for desktop
+
+### Touch and Interaction
+- **Touch Targets**: Minimum 44px height for all interactive elements
+- **Spacing**: Adequate spacing between touch targets (8px minimum)
+- **Gestures**: Implement swipe gestures for mobile actions (delete, edit)
+- **Hover States**: Only apply hover effects on devices that support hover
+- **Focus States**: Clear focus indicators for keyboard navigation
+
+### Performance on Mobile
+- **Images**: Responsive images with appropriate sizes
+- **Fonts**: Optimize font loading and sizing for mobile readability
+- **Animations**: Reduce motion for users with motion sensitivity preferences
+- **Loading**: Prioritize above-the-fold content loading
 
 ## ✅ Acceptance Criteria - Phase 2
 
