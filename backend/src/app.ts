@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 import { createRoutes } from './routes';
 import { ExpenseController } from './controllers/expenseController';
 import { CategoryController } from './controllers/categoryController';
@@ -27,12 +29,9 @@ export class App {
 
   constructor() {
     this.app = express();
-    this.initializeMiddleware();
-    this.initializeRoutes();
-    this.initializeErrorHandling();
   }
 
-  private initializeMiddleware(): void {
+  private setupMiddleware(): void {
     // Security middleware
     this.app.use(helmet());
     
@@ -63,12 +62,43 @@ export class App {
     });
   }
 
-  private initializeRoutes(): void {
+  private setupSwagger(): void {
+    // Swagger UI setup with explicit type annotations
+    this.app.use('/api-docs', swaggerUi.serve as any);
+    this.app.get('/api-docs', swaggerUi.setup(swaggerSpec, {
+      explorer: true,
+      customCss: `
+        .swagger-ui .topbar { display: none }
+        .swagger-ui .info { margin: 50px 0 }
+        .swagger-ui .info .title { color: #3b82f6 }
+      `,
+      customSiteTitle: "Expense Tracker API Documentation"
+    }) as any);
+
+    // Swagger JSON endpoint
+    this.app.get('/api-docs.json', (req, res) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.send(swaggerSpec);
+    });
+
+    logger.info('Swagger documentation available at /api-docs');
+  }
+
+  private setupDatabase(): Promise<void> {
+    return runMigrations();
+  }
+
+  private setupDependencies(): void {
+    // Dependencies are already set up in constructor
+    // This method exists for potential future dependency injection
+  }
+
+  private setupRoutes(): void {
     const apiPrefix = process.env['API_PREFIX'] || '/api';
     this.app.use(apiPrefix, createRoutes(this.expenseController, this.categoryController));
   }
 
-  private initializeErrorHandling(): void {
+  private setupErrorHandling(): void {
     // 404 handler
     this.app.use(notFoundHandler);
     
@@ -80,8 +110,23 @@ export class App {
     try {
       logger.info('Initializing application...');
       
-      // Run database migrations
-      await runMigrations();
+      // Setup middleware
+      this.setupMiddleware();
+      
+      // Setup Swagger documentation
+      this.setupSwagger();
+      
+      // Setup database
+      await this.setupDatabase();
+      
+      // Setup dependencies
+      this.setupDependencies();
+      
+      // Setup routes
+      this.setupRoutes();
+      
+      // Setup error handling
+      this.setupErrorHandling();
       
       logger.info('Application initialized successfully');
     } catch (error) {
