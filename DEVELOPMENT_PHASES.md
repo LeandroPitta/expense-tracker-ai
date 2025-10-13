@@ -164,23 +164,40 @@ GET    /api/health               // API health status
 }
 ```
 
-### Phase 2 - Frontend
+### Phase 2 - Frontend (Modern Stack 2025)
 ```json
 {
   "dependencies": {
-    "next": "14.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "typescript": "^5.0.0",
-    "tailwindcss": "^3.3.0",
-    "lucide-react": "^0.400.0",
-    "chart.js": "^4.4.0",
-    "react-chartjs-2": "^5.2.0",
-    "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1",
-    "date-fns": "^2.30.0",
-    "framer-motion": "^10.16.0",
-    "clsx": "^2.0.0"
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "typescript": "^5.6.0",
+    "tailwindcss": "^3.4.0",
+    "tailwind-merge": "^2.5.0",
+    "lucide-react": "^0.441.0",
+    "recharts": "^2.12.0",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+    "zod": "^3.23.0",
+    "zustand": "^5.0.0",
+    "nuqs": "^1.19.0",
+    "@tanstack/react-query": "^5.59.0",
+    "react-pdf": "^9.1.0",
+    "sonner": "^1.5.0",
+    "vaul": "^1.0.0",
+    "cmdk": "^1.0.0",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^11.11.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-dialog": "^1.1.0",
+    "@radix-ui/react-select": "^2.1.0",
+    "@radix-ui/react-popover": "^1.1.0",
+    "@radix-ui/react-calendar": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.0"
   }
 }
 ```
