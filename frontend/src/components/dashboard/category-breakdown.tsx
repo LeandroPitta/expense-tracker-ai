@@ -40,7 +40,9 @@ export function CategoryBreakdown() {
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const chartData = useMemo(() => {
-    if (!expenses || !categories || !Array.isArray(expenses)) return [];
+    if (!expenses || !Array.isArray(expenses) || !categories || !Array.isArray(categories)) {
+      return [];
+    }
 
     // Group expenses by category
     const categoryTotals = expenses.reduce((acc, expense) => {

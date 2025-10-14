@@ -11,9 +11,7 @@ export function useCategories() {
     queryKey: ['categories'],
     queryFn: async () => {
       try {
-        console.log('🔄 Fetching categories from API');
         const result = await categoryApi.getAll();
-        console.log('✅ Categories fetched successfully:', result?.length || 0, 'categories');
         return result;
       } catch (error) {
         console.error('❌ Error fetching categories:', error);

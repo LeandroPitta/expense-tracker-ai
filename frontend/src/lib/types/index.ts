@@ -48,26 +48,21 @@ export interface ExpenseFilters {
   limit?: number;
 }
 
-// Statistics
+// Statistics (matching backend response)
 export interface ExpenseStats {
-  totalAmount: number;
-  totalCount: number;
-  averageAmount: number;
-  currentMonthAmount: number;
-  previousMonthAmount: number;
-  monthlyChange: number;
+  totalExpenses: number; // total count of expenses
+  totalAmount: number; // total amount of all expenses
+  currentMonthAmount: number; // current month amount
+  previousMonthAmount: number; // previous month amount
   categoryBreakdown: CategoryStats[];
-  monthlyTrend: MonthlyStats[];
   paymentMethodBreakdown: PaymentMethodStats[];
 }
 
 export interface CategoryStats {
   category: string;
-  categoryName: string;
   amount: number;
   count: number;
   percentage: number;
-  color?: string;
 }
 
 export interface MonthlyStats {
@@ -78,11 +73,9 @@ export interface MonthlyStats {
 }
 
 export interface PaymentMethodStats {
-  paymentMethod: PaymentMethod;
-  paymentMethodName: string;
+  method: PaymentMethod;
   amount: number;
   count: number;
-  percentage: number;
 }
 
 // UI Types

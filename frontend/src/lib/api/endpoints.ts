@@ -27,7 +27,8 @@ export const expenseApi = {
     const query = params.toString();
     const endpoint = query ? `/expenses?${query}` : '/expenses';
     
-    return apiClient.get<Expense[]>(endpoint);
+    const response = await apiClient.get<{data: Expense[], pagination: any}>(endpoint);
+    return response.data || [];
   },
 
   // Get expense by ID
@@ -63,7 +64,7 @@ export const expenseApi = {
     }
     
     const query = params.toString();
-    const endpoint = query ? `/expenses/statistics?${query}` : '/expenses/statistics';
+    const endpoint = query ? `/expenses/stats?${query}` : '/expenses/stats';
     
     return apiClient.get<ExpenseStats>(endpoint);
   },
@@ -75,7 +76,15 @@ export const expenseApi = {
 export const categoryApi = {
   // Get all categories
   getAll: async (): Promise<Category[]> => {
-    return apiClient.get<Category[]>('/categories');
+    const response = await apiClient.get<Record<string, any>>('/categories');
+    
+    // Convert object to array format expected by frontend
+    return Object.entries(response).map(([name, data]) => ({
+      id: name.toLowerCase().replace(/\s+/g, '-'),
+      name,
+      icon: data.icon || '📋',
+      subcategories: data.subcategories || {},
+    }));
   },
 };
 

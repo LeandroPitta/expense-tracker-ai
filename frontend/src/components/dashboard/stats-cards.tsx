@@ -2,64 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useExpenses } from "@/hooks/use-expenses";
-import { useMemo } from "react";
+import { useExpenseStats } from "@/hooks/use-expenses";
 import { DollarSign, TrendingUp, Calendar, Target } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 export function StatsCards() {
-  const { data: expenses, isLoading } = useExpenses();
-
-  const stats = useMemo(() => {
-    if (!expenses || !Array.isArray(expenses)) return null;
-
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-
-    // Total expenses
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-    // This month expenses
-    const thisMonthExpenses = expenses
-      .filter(expense => {
-        const expenseDate = new Date(expense.date);
-        return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
-      })
-      .reduce((sum, expense) => sum + expense.amount, 0);
-
-    // Previous month expenses for comparison
-    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-    
-    const prevMonthExpenses = expenses
-      .filter(expense => {
-        const expenseDate = new Date(expense.date);
-        return expenseDate.getMonth() === prevMonth && expenseDate.getFullYear() === prevYear;
-      })
-      .reduce((sum, expense) => sum + expense.amount, 0);
-
-    // Calculate growth percentage
-    const growthPercentage = prevMonthExpenses > 0 
-      ? ((thisMonthExpenses - prevMonthExpenses) / prevMonthExpenses) * 100
-      : 0;
-
-    // Average expense
-    const averageExpense = expenses.length > 0 ? totalExpenses / expenses.length : 0;
-
-    // Budget simulation (in a real app, this would come from user settings)
-    const monthlyBudget = 5000; // Mock budget
-    const budgetUsed = (thisMonthExpenses / monthlyBudget) * 100;
-
-    return {
-      totalExpenses,
-      thisMonthExpenses,
-      growthPercentage,
-      averageExpense,
-      monthlyBudget,
-      budgetUsed,
-      totalTransactions: expenses.length,
-    };
-  }, [expenses]);
+  const { data: apiStats, isLoading } = useExpenseStats();
 
   if (isLoading) {
     return (
@@ -80,46 +28,58 @@ export function StatsCards() {
     );
   }
 
-  if (!stats) {
+  if (!apiStats) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-sm text-muted-foreground">No expenses found</p>
+            <p className="text-sm text-muted-foreground">No stats available</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
+  // Calculate growth percentage
+  const growthPercentage = apiStats.previousMonthAmount > 0 
+    ? ((apiStats.currentMonthAmount - apiStats.previousMonthAmount) / apiStats.previousMonthAmount) * 100
+    : 0;
+
+  // Calculate average expense
+  const averageExpense = apiStats.totalExpenses > 0 ? apiStats.totalAmount / apiStats.totalExpenses : 0;
+
+  // Budget simulation (in a real app, this would come from user settings)
+  const monthlyBudget = 5000; // Mock budget
+  const budgetUsed = (apiStats.currentMonthAmount / monthlyBudget) * 100;
+
   const statsData = [
     {
       title: "Total Expenses",
-      value: formatCurrency(stats.totalExpenses),
-      description: `${stats.totalTransactions} transactions`,
+      value: formatCurrency(apiStats.totalAmount),
+      description: `${apiStats.totalExpenses} transactions`,
       icon: DollarSign,
       trend: null,
     },
     {
       title: "This Month",
-      value: formatCurrency(stats.thisMonthExpenses),
-      description: `${stats.growthPercentage >= 0 ? '+' : ''}${stats.growthPercentage.toFixed(1)}% from last month`,
+      value: formatCurrency(apiStats.currentMonthAmount),
+      description: `${growthPercentage >= 0 ? '+' : ''}${growthPercentage.toFixed(1)}% from last month`,
       icon: Calendar,
-      trend: stats.growthPercentage,
+      trend: growthPercentage,
     },
     {
       title: "Average Expense",
-      value: formatCurrency(stats.averageExpense),
+      value: formatCurrency(averageExpense),
       description: "Per transaction",
       icon: TrendingUp,
       trend: null,
     },
     {
       title: "Budget Used",
-      value: `${stats.budgetUsed.toFixed(1)}%`,
-      description: `${formatCurrency(stats.monthlyBudget - stats.thisMonthExpenses)} remaining`,
+      value: `${budgetUsed.toFixed(1)}%`,
+      description: `${formatCurrency(monthlyBudget - apiStats.currentMonthAmount)} remaining`,
       icon: Target,
-      trend: stats.budgetUsed > 100 ? stats.budgetUsed - 100 : null,
+      trend: budgetUsed > 100 ? budgetUsed - 100 : null,
     },
   ];
 

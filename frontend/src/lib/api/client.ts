@@ -49,7 +49,14 @@ class ApiClient {
         return {} as T;
       }
 
-      return await response.json();
+      const responseData = await response.json();
+      
+      // Handle backend API format: {success: true, data: actualData}
+      if (responseData.success && responseData.data !== undefined) {
+        return responseData.data;
+      }
+      
+      return responseData;
     } catch (error) {
       clearTimeout(timeoutId);
       

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { expenseApi } from '@/lib/api';
-import type { Expense, CreateExpenseDto, ExpenseFilters } from '@/lib/types';
+import type { Expense, CreateExpenseDto, ExpenseFilters, ExpenseStats } from '@/lib/types';
 
 /**
  * Hook for fetching expenses with optional filters
@@ -45,7 +45,7 @@ export function useExpense(id: string) {
  * Hook for expense statistics
  */
 export function useExpenseStats(filters?: ExpenseFilters) {
-  return useQuery({
+  return useQuery<ExpenseStats>({
     queryKey: ['expense-stats', filters],
     queryFn: () => expenseApi.getStats(filters),
     staleTime: 2 * 60 * 1000, // 2 minutes
