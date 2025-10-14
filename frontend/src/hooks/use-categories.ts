@@ -9,10 +9,21 @@ import { CATEGORIES } from '@/lib/constants';
 export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
-    queryFn: categoryApi.getAll,
-    staleTime: 60 * 60 * 1000, // 1 hour - categories don't change often
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
-    // Fallback to local constants if API fails
+    queryFn: async () => {
+      try {
+        console.log('🔄 Fetching categories from API');
+        const result = await categoryApi.getAll();
+        console.log('✅ Categories fetched successfully:', result?.length || 0, 'categories');
+        return result;
+      } catch (error) {
+        console.error('❌ Error fetching categories:', error);
+        // Return local categories as fallback when API is not available
+        return Object.values(CATEGORIES);
+      }
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes - categories don't change often
+    gcTime: 60 * 60 * 1000, // 1 hour
+    refetchOnWindowFocus: false,
     retry: 1,
   });
 }

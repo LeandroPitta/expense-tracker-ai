@@ -24,7 +24,7 @@ export function ExpenseTrend() {
   const { data: expenses, isLoading } = useExpenses();
 
   const chartData = useMemo(() => {
-    if (!expenses) return [];
+    if (!expenses || !Array.isArray(expenses)) return [];
 
     // Get last 6 months of data
     const months: ExpenseTrendData[] = [];

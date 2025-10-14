@@ -10,9 +10,22 @@ import type { Expense, CreateExpenseDto, ExpenseFilters } from '@/lib/types';
 export function useExpenses(filters?: ExpenseFilters) {
   return useQuery({
     queryKey: ['expenses', filters],
-    queryFn: () => expenseApi.getAll(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    queryFn: async () => {
+      try {
+        console.log('🔄 Fetching expenses with filters:', filters);
+        const result = await expenseApi.getAll(filters);
+        console.log('✅ Expenses fetched successfully:', result?.length || 0, 'items');
+        return result;
+      } catch (error) {
+        console.error('❌ Error fetching expenses:', error);
+        // Return empty array as fallback when API is not available
+        return [] as Expense[];
+      }
+    },
+    staleTime: 1 * 60 * 1000, // 1 minute - reasonable for development
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 }
 

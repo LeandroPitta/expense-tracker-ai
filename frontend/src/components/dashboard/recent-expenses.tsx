@@ -14,7 +14,7 @@ export function RecentExpenses() {
   const { data: expenses, isLoading } = useExpenses();
 
   const recentExpenses = useMemo(() => {
-    if (!expenses) return [];
+    if (!expenses || !Array.isArray(expenses)) return [];
 
     return expenses
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

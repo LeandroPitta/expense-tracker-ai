@@ -11,7 +11,7 @@ export function StatsCards() {
   const { data: expenses, isLoading } = useExpenses();
 
   const stats = useMemo(() => {
-    if (!expenses) return null;
+    if (!expenses || !Array.isArray(expenses)) return null;
 
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();

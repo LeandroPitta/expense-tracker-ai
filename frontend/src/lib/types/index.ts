@@ -1,3 +1,11 @@
+// Payment Methods
+export type PaymentMethod = 
+  | 'cash' 
+  | 'credit_card' 
+  | 'debit_card' 
+  | 'pix' 
+  | 'bank_transfer';
+
 // Base Expense Type (matching backend)
 export interface Expense {
   id: string;
@@ -11,14 +19,6 @@ export interface Expense {
   createdAt: string;
   updatedAt: string;
 }
-
-// Payment Methods
-export type PaymentMethod = 
-  | 'cash' 
-  | 'credit_card' 
-  | 'debit_card' 
-  | 'pix' 
-  | 'bank_transfer';
 
 // Create Expense DTO (for API requests)
 export type CreateExpenseDto = Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>;

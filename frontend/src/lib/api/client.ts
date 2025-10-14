@@ -23,6 +23,7 @@ class ApiClient {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache', // Light cache control
         ...options.headers,
       },
     };
