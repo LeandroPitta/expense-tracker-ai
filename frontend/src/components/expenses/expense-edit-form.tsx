@@ -289,6 +289,7 @@ export function ExpenseEditForm({ expenseId }: ExpenseEditFormProps) {
                         form.setValue('subcategory', '');
                       }} 
                       value={field.value}
+                      defaultValue={field.value}
                       key={field.value} // Force re-render when value changes
                     >
                       <FormControl>
@@ -319,6 +320,7 @@ export function ExpenseEditForm({ expenseId }: ExpenseEditFormProps) {
                     <Select 
                       onValueChange={field.onChange} 
                       value={field.value}
+                      defaultValue={field.value}
                       key={`${selectedCategory}-${field.value}`} // Force re-render when category or value changes
                     >
                       <FormControl>
@@ -352,7 +354,12 @@ export function ExpenseEditForm({ expenseId }: ExpenseEditFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Payment Method *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    defaultValue={field.value}
+                    key={field.value} // Force re-render when value changes
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select payment method" />
