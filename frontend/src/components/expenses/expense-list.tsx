@@ -16,6 +16,7 @@ import {
 import { useExpenses, useDeleteExpense } from "@/hooks/use-expenses";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Edit, Trash2, DollarSign, Calendar, CreditCard } from "lucide-react";
+import Link from "next/link";
 import type { ExpenseFilters, Expense } from "@/lib/types";
 
 interface ExpenseListProps {
@@ -184,8 +185,10 @@ export function ExpenseList({ filters }: ExpenseListProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/expenses/${expense.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
                       </Button>
                       <Button 
                         variant="ghost" 
@@ -243,8 +246,10 @@ export function ExpenseList({ filters }: ExpenseListProps) {
                 </div>
                 
                 <div className="flex items-center justify-end mt-3 space-x-2">
-                  <Button variant="ghost" size="sm">
-                    <Edit className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={`/expenses/${expense.id}/edit`}>
+                      <Edit className="h-4 w-4" />
+                    </Link>
                   </Button>
                   <Button 
                     variant="ghost" 
