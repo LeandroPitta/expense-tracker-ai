@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useExpenses } from "@/hooks/use-expenses";
+import { useExpenses, useDeleteExpense } from "@/hooks/use-expenses";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Edit, Trash2, DollarSign, Calendar, CreditCard } from "lucide-react";
 import type { ExpenseFilters, Expense } from "@/lib/types";
@@ -34,6 +34,18 @@ export function ExpenseList({ filters }: ExpenseListProps) {
   };
   
   const { data: expenses, isLoading, error } = useExpenses(fullFilters);
+  const deleteExpense = useDeleteExpense();
+
+  const handleDeleteExpense = async (expense: Expense) => {
+    if (window.confirm(`Are you sure you want to delete "${expense.title}"? This action cannot be undone.`)) {
+      try {
+        await deleteExpense.mutateAsync(expense.id);
+      } catch (error) {
+        // Error handling is done in the mutation hook
+        console.error('Delete failed:', error);
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -175,7 +187,13 @@ export function ExpenseList({ filters }: ExpenseListProps) {
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteExpense(expense)}
+                        disabled={deleteExpense.isPending}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -228,7 +246,13 @@ export function ExpenseList({ filters }: ExpenseListProps) {
                   <Button variant="ghost" size="sm">
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleDeleteExpense(expense)}
+                    disabled={deleteExpense.isPending}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
