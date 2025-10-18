@@ -23,16 +23,16 @@ interface CategoryData {
 }
 
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#00ff00",
+  "#2563eb", // Blue 600 - mais escuro para melhor contraste
+  "#dc2626", // Red 600  
+  "#16a34a", // Green 600
+  "#d97706", // Amber 600
+  "#7c3aed", // Violet 600
+  "#db2777", // Pink 600
+  "#0891b2", // Cyan 600
+  "#65a30d", // Lime 600
+  "#ea580c", // Orange 600
+  "#4f46e5", // Indigo 600
 ];
 
 export function CategoryBreakdown() {
@@ -117,7 +117,8 @@ export function CategoryBreakdown() {
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
-              label={(entry: any) => `${entry.percentage.toFixed(1)}%`}
+              label={(entry: any) => entry.percentage > 5 ? `${entry.percentage.toFixed(1)}%` : ''}
+              labelLine={false}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -129,13 +130,17 @@ export function CategoryBreakdown() {
                 backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',
                 borderRadius: '6px',
+                color: 'hsl(var(--foreground))',
               }}
             />
             <Legend
               verticalAlign="bottom"
               height={36}
+              wrapperStyle={{
+                color: 'hsl(var(--foreground))',
+              }}
               formatter={(value, entry) => (
-                <span style={{ color: entry.color }}>
+                <span style={{ color: entry.color, fontWeight: '500' }}>
                   {value}
                 </span>
               )}

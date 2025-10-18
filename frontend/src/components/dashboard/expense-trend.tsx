@@ -12,6 +12,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Area,
+  AreaChart,
 } from "recharts";
 
 interface ExpenseTrendData {
@@ -77,16 +79,28 @@ export function ExpenseTrend() {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+          <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <defs>
+              <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#1d4ed8" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#1d4ed8" stopOpacity={0.05}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid 
+              strokeDasharray="2 2" 
+              stroke="hsl(var(--border))"
+              opacity={0.6}
+            />
             <XAxis 
               dataKey="month" 
-              className="text-xs"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: 'hsl(var(--foreground) / 0.8)' }}
+              axisLine={false}
+              tickLine={false}
             />
             <YAxis 
-              className="text-xs"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: 'hsl(var(--foreground) / 0.8)' }}
+              axisLine={false}
+              tickLine={false}
               tickFormatter={(value) => `$${value.toLocaleString()}`}
             />
             <Tooltip
@@ -96,20 +110,34 @@ export function ExpenseTrend() {
               ]}
               labelFormatter={(label) => `Month: ${label}`}
               contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
+                backgroundColor: 'hsl(var(--popover))',
                 border: '1px solid hsl(var(--border))',
-                borderRadius: '6px',
+                borderRadius: '8px',
+                color: 'hsl(var(--popover-foreground))',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05)',
+                fontSize: '14px',
               }}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="amount"
-              stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6 }}
+              stroke="#1d4ed8"
+              strokeWidth={3}
+              fill="url(#colorAmount)"
+              dot={{ 
+                fill: '#1d4ed8', 
+                stroke: '#ffffff',
+                strokeWidth: 2, 
+                r: 5 
+              }}
+              activeDot={{ 
+                r: 7, 
+                fill: '#1d4ed8', 
+                stroke: '#ffffff', 
+                strokeWidth: 2
+              }}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>
