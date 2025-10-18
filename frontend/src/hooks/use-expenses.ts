@@ -71,6 +71,7 @@ export function useCreateExpense() {
       toast.success('Expense created successfully!');
     },
     onError: (error: any) => {
+      console.error('❌ Mutation error:', error);
       toast.error(error.message || 'Failed to create expense');
     },
   });

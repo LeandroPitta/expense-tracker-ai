@@ -39,11 +39,11 @@ export function ExpenseForm() {
   const createExpense = useCreateExpense();
   
   const form = useForm<CreateExpenseDto>({
-    resolver: zodResolver(expenseSchema),
+    // resolver: zodResolver(expenseSchema), // Manual validation in onSubmit
     defaultValues: {
       title: '',
       description: '',
-      amount: 0,
+      amount: undefined, // Let user fill this
       category: '',
       subcategory: '',
       date: new Date().toISOString().split('T')[0],
@@ -56,10 +56,47 @@ export function ExpenseForm() {
 
   const onSubmit = async (data: CreateExpenseDto) => {
     try {
-      await createExpense.mutateAsync(data);
+
+      
+      // Validate required fields first
+      if (!data.title || data.title.trim() === '') {
+        toast.error('Title is required');
+        return;
+      }
+      if (!data.category || data.category.trim() === '') {
+        toast.error('Please select a category');
+        return;
+      }
+      if (!data.subcategory || data.subcategory.trim() === '') {
+        toast.error('Please select a subcategory');
+        return;
+      }
+      if (!data.amount || data.amount <= 0) {
+        toast.error('Amount must be greater than 0');
+        return;
+      }
+
+      // Clean and prepare data for API
+      const cleanData: CreateExpenseDto = {
+        title: data.title.trim(),
+        amount: Number(data.amount),
+        category: data.category.trim(),
+        subcategory: data.subcategory.trim(),
+        date: data.date || new Date().toISOString().split('T')[0],
+        paymentMethod: data.paymentMethod || 'credit_card',
+      };
+
+      // Only include description if it has content
+      if (data.description && data.description.trim() !== '') {
+        cleanData.description = data.description.trim();
+      }
+
+
+      await createExpense.mutateAsync(cleanData);
       toast.success('Expense added successfully!');
       router.push('/expenses');
     } catch (error) {
+      console.error('❌ Expense creation error:', error);
       toast.error('Failed to add expense. Please try again.');
     }
   };
@@ -124,7 +161,15 @@ export function ExpenseForm() {
                         min="0"
                         placeholder="0.00"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || value === null || value === undefined) {
+                            field.onChange(undefined);
+                          } else {
+                            const numValue = parseFloat(value);
+                            field.onChange(isNaN(numValue) ? undefined : numValue);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

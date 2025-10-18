@@ -78,7 +78,7 @@ class ApiClient {
     }
 
     return {
-      message: errorData.message || 'An error occurred',
+      message: errorData.message || errorData.error || 'An error occurred',
       code: errorData.code || response.status.toString(),
       status: response.status,
     };

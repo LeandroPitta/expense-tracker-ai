@@ -28,15 +28,42 @@ export function formatCurrency(value: number): string {
  * Format date using date-fns
  */
 export function formatDate(
-  date: string | Date,
+  date: string | Date | null | undefined,
   formatString: string = DATE_FORMATS.DISPLAY
 ): string {
   try {
-    const dateObj = typeof date === 'string' ? parseISO(date) : date;
-    if (!isValid(dateObj)) return 'Invalid Date';
+    // Handle null/undefined cases
+    if (!date) {
+      return 'Invalid Date';
+    }
+    
+    let dateObj: Date;
+    
+    if (typeof date === 'string') {
+      // Handle empty strings
+      if (date.trim() === '') {
+        return 'Invalid Date';
+      }
+      
+      // Check if it's a timestamp (e.g., "1760745600000.0")
+      if (/^\d+(\.\d+)?$/.test(date.trim())) {
+        const timestamp = parseFloat(date);
+        dateObj = new Date(timestamp);
+      } else {
+        // Try to parse as ISO date string
+        dateObj = parseISO(date);
+      }
+    } else {
+      dateObj = date;
+    }
+    
+    if (!isValid(dateObj)) {
+      return 'Invalid Date';
+    }
     
     return format(dateObj, formatString, { locale: ptBR });
-  } catch {
+  } catch (error) {
+    console.error('formatDate error:', error, 'for date:', date);
     return 'Invalid Date';
   }
 }
@@ -44,8 +71,10 @@ export function formatDate(
 /**
  * Format relative time (e.g., "2 days ago")
  */
-export function formatRelativeTime(date: string | Date): string {
+export function formatRelativeTime(date: string | Date | null | undefined): string {
   try {
+    if (!date) return 'Invalid Date';
+    
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
     if (!isValid(dateObj)) return 'Invalid Date';
     
