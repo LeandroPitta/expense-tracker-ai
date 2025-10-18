@@ -82,7 +82,7 @@ export function ExpenseForm() {
         amount: Number(data.amount),
         category: data.category.trim(),
         subcategory: data.subcategory.trim(),
-        date: data.date || new Date().toISOString().split('T')[0],
+        date: data.date ? new Date(data.date + 'T12:00:00.000Z').toISOString() : new Date().toISOString(),
         paymentMethod: data.paymentMethod || 'credit_card',
       };
 

@@ -11,13 +11,23 @@ import { ArrowUpRight, Calendar, DollarSign } from "lucide-react";
 import Link from "next/link";
 
 export function RecentExpenses() {
-  const { data: expenses, isLoading } = useExpenses();
+  const { data: expenses, isLoading } = useExpenses({ limit: 50 });
 
   const recentExpenses = useMemo(() => {
     if (!expenses || !Array.isArray(expenses)) return [];
 
+    // Use the same sorting logic as in useExpenses hook
+    const getTime = (dateStr: string) => {
+      // If it's a timestamp (number string), convert to number
+      if (/^\d+(\.\d+)?$/.test(dateStr)) {
+        return parseFloat(dateStr);
+      }
+      // Otherwise treat as ISO date string
+      return new Date(dateStr).getTime();
+    };
+
     return expenses
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .sort((a, b) => getTime(b.date) - getTime(a.date))
       .slice(0, 5);
   }, [expenses]);
 
