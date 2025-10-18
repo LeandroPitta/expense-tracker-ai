@@ -23,9 +23,17 @@ interface ExpenseListProps {
 }
 
 export function ExpenseList({ filters }: ExpenseListProps) {
-  const { data: expenses, isLoading, error } = useExpenses(filters);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  
+  // Add pagination and sorting to filters  
+  const fullFilters = {
+    ...filters,
+    page: 1,
+    limit: 50 // Get more items to include recent expenses
+  };
+  
+  const { data: expenses, isLoading, error } = useExpenses(fullFilters);
 
   if (isLoading) {
     return (

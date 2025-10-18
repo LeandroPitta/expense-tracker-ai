@@ -12,10 +12,21 @@ export function useExpenses(filters?: ExpenseFilters) {
     queryKey: ['expenses', filters],
     queryFn: async () => {
       try {
-        console.log('🔄 Fetching expenses with filters:', filters);
         const result = await expenseApi.getAll(filters);
-        console.log('✅ Expenses fetched successfully:', result?.length || 0, 'items');
-        return result;
+        
+        // Sort expenses to show most recent first (handle both ISO dates and timestamps)
+        return result.sort((a, b) => {
+          const getTime = (dateStr: string) => {
+            // If it's a timestamp (number string), convert to number
+            if (/^\d+(\.\d+)?$/.test(dateStr)) {
+              return parseFloat(dateStr);
+            }
+            // Otherwise treat as ISO date string
+            return new Date(dateStr).getTime();
+          };
+          
+          return getTime(b.date) - getTime(a.date);
+        });
       } catch (error) {
         console.error('❌ Error fetching expenses:', error);
         // Return empty array as fallback when API is not available
@@ -61,12 +72,13 @@ export function useCreateExpense() {
   return useMutation({
     mutationFn: (data: CreateExpenseDto) => expenseApi.create(data),
     onSuccess: (newExpense) => {
-      // Invalidate and refetch expense lists
+      // Force refetch of expense lists to ensure new data appears
+      queryClient.refetchQueries({ queryKey: ['expenses'] });
+      queryClient.refetchQueries({ queryKey: ['expense-stats'] });
+      
+      // Also invalidate to clear any stale cache
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
       queryClient.invalidateQueries({ queryKey: ['expense-stats'] });
-      
-      // Optimistically add to cache
-      queryClient.setQueryData(['expenses', newExpense.id], newExpense);
       
       toast.success('Expense created successfully!');
     },
